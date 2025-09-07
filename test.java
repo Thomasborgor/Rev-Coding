@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @com.qualcomm.robotcore.eventloop.opmode.TeleOp(name="Simple Tank Drive", group="Linear Opmode")
 public class SweveDrive extends LinearOpMode {
-
+    private int thingy = 0;
     // Declare motors and servos
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
