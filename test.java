@@ -59,7 +59,8 @@ public class SwerveDriveTest extends LinearOpMode {
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftDrive = null;
     private DcMotor rightDrive = null;
-    private DcMotor flywheel = null;
+    private DcMotor intakeWheel = null;
+    private DcMotor flyWheel = null;
     //Scanner scanner = new Scanner(System.in)
 
     @Override
@@ -72,28 +73,46 @@ public class SwerveDriveTest extends LinearOpMode {
         // step (using the FTC Robot Controller app on the phone).
         leftDrive  = hardwareMap.get(DcMotor.class, "left_drive");
         rightDrive = hardwareMap.get(DcMotor.class, "right_drive");
-        flywheel = hardwareMap.get(DcMotor.class, "flywheel");
+        intakeWheel = hardwareMap.get(DcMotor.class, "intakeWheel");
+        flyWheel = hardwareMap.get(DcMotor.class, "flyWheel");
 
         // To drive forward, most robots need the motor on one side to be reversed, because the axles point in opposite directions.
         // Pushing the left stick forward MUST make robot go forward. So adjust these two lines based on your first test drive.
         // Note: The settings here assume direct drive on left and right wheels.  Gear Reduction or 90 Deg drives may require direction flips
         leftDrive.setDirection(DcMotor.Direction.REVERSE);
         rightDrive.setDirection(DcMotor.Direction.FORWARD);
-        flywheel.setDirection(DcMotor.Direction.FORWARD);
+        intakeWheel.setDirection(DcMotor.Direction.FORWARD);
+        flyWheel.setDirection(DcMotor.Direction.REVERSE);
 
         // Wait for the game to start (driver presses START)
         waitForStart();
         runtime.reset();
-
+        double flyWheelGo = 0.0;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
             // Setup a variable for each drive wheel to save power level for telemetry
             double leftPower;
             double rightPower;
-            double flyWheelGo;
+            double intakeWheelGo;
             
-            flyWheelGo = Range.clip(gamepad1.left_trigger, 0.0, 1.0);
+            //motor  magic number: 384.5
+            if (gamepad1.a) {
+                flyWheelGo = 0.8;
+            } else if (gamepad1.b) {
+                flyWheelGo = 0.65;
+            } else if (gamepad1.x) {
+                flyWheelGo = 0.9;
+            } else if (gamepad1.y) {
+                flyWheelGo = 0.7;
+            }
+            if (gamepad1.left_bumper) {
+                intakeWheelGo = 1.0;
+            } else if (gamepad1.right_bumper) {
+                intakeWheelGo = -1.0;
+            } else {
+                intakeWheelGo = 0.0;
+            }
             
 
             // Choose to drive using either Tank Mode, or POV Mode
@@ -116,7 +135,8 @@ public class SwerveDriveTest extends LinearOpMode {
             // Send calculated power to wheels
             leftDrive.setPower(leftPower);
             rightDrive.setPower(rightPower);
-            flywheel.setPower(flyWheelGo);
+            intakeWheel.setPower(intakeWheelGo);
+            flyWheel.setPower(flyWheelGo);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Trigger", "%.2f", flyWheelGo);
